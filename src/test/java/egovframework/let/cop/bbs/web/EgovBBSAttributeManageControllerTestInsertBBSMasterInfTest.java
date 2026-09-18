@@ -1,14 +1,12 @@
 package egovframework.let.cop.bbs.web;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.egovframe.rte.fdl.cmmn.exception.BaseRuntimeException;
 import org.junit.jupiter.api.Test;
 
 import egovframework.test.EgovTestAbstractSpringMvc;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -19,29 +17,79 @@ import lombok.extern.slf4j.Slf4j;
  *
  */
 
-@RequiredArgsConstructor
 @Slf4j
 class EgovBBSAttributeManageControllerTestInsertBBSMasterInfTest extends EgovTestAbstractSpringMvc {
 
+	// TODO 이백행 2026-09-18 1.더미(Dummy) 인증
+	// EgovUserDetailsHelper.getAuthenticatedUser()
+	// /egovframe-common-components/src/main/resources/egovframework/spring/com/context-egovuserdetailshelper.xml
+	// egovframework.com.cmm.service.impl.EgoDummyUserDetailsServiceImpl
+
 	/**
-	 * 신규 게시판 마스터 정보를 등록한다.
-	 * 
-	 * @throws BaseRuntimeException
-	 * @throws Exception
+	 * 신규 게시판 마스터 정보를 등록한다. 성공
 	 */
 	@Test
-	void test() throws BaseRuntimeException, Exception {
+	void test() {
 		// given
+		// bbsId는 서비스에서 생성한다.
+		// posblAtchFileSize, useAt, frstRegisterId는 컨트롤러에서 설정한다.
+		// 등록일시는 INSERT SQL의 SYSDATE()로 설정한다.
 
 		// when
-		mockMvc.perform(post("/cop/bbs/insertBBSMasterInf.do")).andExpect(status().isOk());
+		assertDoesNotThrow(() ->
+
+		mockMvc.perform(post("/cop/bbs/insertBBSMasterInf.do")
+
+				.param("bbsTyCode", "BBST01") // 게시판유형코드
+				.param("bbsAttrbCode", "BBSA03") // 게시판속성코드
+				.param("bbsNm", "테스트 게시판") // 게시판명
+				.param("bbsIntrcn", "테스트 게시판 소개") // 게시판소개
+				.param("replyPosblAt", "N") // 답장가능여부
+				.param("fileAtchPosblAt", "Y") // 파일첨부가능여부
+				.param("posblAtchFileNumber", "3") // 첨부가능파일숫자
+				.param("tmplatId", "TMPLAT_BOARD_DEFAULT")) // 템플릿ID
+
+				.andExpect(status().isOk())
+
+		);
 
 		// then
-		if (log.isDebugEnabled()) {
-			log.debug("test");
-		}
-
-		assertEquals("", "", "신규 게시판 속성정보를 생성한다.");
+		log.debug("then");
 	}
+
+//	/**
+//	 * 신규 게시판 마스터 정보를 등록한다. 실패
+//	 */
+//	@Test
+//	void test2() {
+//		// given
+//		// bbsId는 서비스에서 생성한다.
+//		// posblAtchFileSize, useAt, frstRegisterId는 컨트롤러에서 설정한다.
+//		// 등록일시는 INSERT SQL의 SYSDATE()로 설정한다.
+//
+//		// when
+//		ServletException exception = assertThrows(ServletException.class, () ->
+//
+//		mockMvc.perform(post("/cop/bbs/insertBBSMasterInf.do")
+//
+////				.param("bbsTyCode", "BBST01") // 게시판유형코드
+//				.param("bbsTyCode", "test 이백행 2026-09-18") // 게시판유형코드
+//
+//				.param("bbsAttrbCode", "BBSA03") // 게시판속성코드
+//				.param("bbsNm", "테스트 게시판") // 게시판명
+//				.param("bbsIntrcn", "테스트 게시판 소개") // 게시판소개
+//				.param("replyPosblAt", "N") // 답장가능여부
+//				.param("fileAtchPosblAt", "Y") // 파일첨부가능여부
+//				.param("posblAtchFileNumber", "3") // 첨부가능파일숫자
+//				.param("tmplatId", "TMPLAT_BOARD_DEFAULT")) // 템플릿ID
+//
+//				.andExpect(status().isOk())
+//
+//		);
+//
+//		// then
+////		assertInstanceOf(NullPointerException.class, exception.getCause());
+//		assertInstanceOf(DataAccessException.class, exception.getCause());
+//	}
 
 }
